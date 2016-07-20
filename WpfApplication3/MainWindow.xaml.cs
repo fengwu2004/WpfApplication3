@@ -29,13 +29,9 @@ namespace WpfApplication3
         {
             InitializeComponent();
 
-            _scriptSuite = new ScriptSuite(){ };
+            //_scriptSuite = new ScriptSuite(){ };
 
             XmlSerializer xmldes = new XmlSerializer(typeof(ScriptSuite));
-
-            TextWriter textWriter = new StreamWriter("mydata1.xml");
-
-            xmldes.Serialize(textWriter, _scriptSuite);
 
             string path = "mydata1.xml";
 
@@ -43,6 +39,12 @@ namespace WpfApplication3
             {
                 _scriptSuite = (ScriptSuite)xmldes.Deserialize(stream);
             }
+
+            _scriptSuite._scriptUnit._cdataContext = "<ABCDEFE>";
+
+            TextWriter textWriter = new StreamWriter("mydata2.xml");
+
+            xmldes.Serialize(textWriter, _scriptSuite);
 
             Console.WriteLine("OK");
         }
