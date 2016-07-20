@@ -53,20 +53,26 @@ namespace WpfApplication3
     [Serializable]
     public class ScriptUnit
     {
-        public ScriptUnit()
-        {
-            _scriptId = "1254";
-
-            _Name = "serialtest";
-
-            _cdataContext = "include <string>";
-        }
-
         [XmlAttribute("Id")]
         public string _scriptId { get; set; }
 
         [XmlElement("Name")]
         public string _Name { get; set; }
+
+        [XmlAttribute("IsActive")]
+        public bool _isActive { get; set; }
+
+        [XmlAttribute("IsApplicable")]
+        public bool _isApplicable { get; set; }
+
+        [XmlAttribute("Type")]
+        public int _type { get; set; }
+
+        [XmlAttribute("SequenceNumber")]
+        public int _sequenceNumber { get; set; }
+
+        [XmlAttribute("Version")]
+        public string _version { get; set; }
 
         [XmlIgnore]
         public string _cdataContext { get; set; }
@@ -96,20 +102,51 @@ namespace WpfApplication3
     }
 
     [Serializable]
-    [XmlRoot(ElementName ="TESTSUITE")]
-    public class ScriptSuite
+    public class ScriptGroup
     {
-        public ScriptSuite()
-        {
-            _name = "Yanli";
-
-            _scriptUnit = new ScriptUnit();
-        }
+        [XmlAttribute("Id")]
+        public string _id { get; set; }
 
         [XmlAttribute("Name")]
         public string _name { get; set; }
 
+        [XmlAttribute("IsActive")]
+        public bool _isActive { get; set; }
+
+        [XmlAttribute("IsApplicable")]
+        public bool _isApplicable { get; set; }
+
+        [XmlAttribute("SequenceNumber")]
+        public int _sequenceNumber { get; set; }
+
         [XmlElement("SCRIPT")]
-        public ScriptUnit _scriptUnit; 
+        public List<ScriptUnit> _scrpits { get; set; }
+    }
+
+    [Serializable]
+    public class ScriptGroups
+    {
+        [XmlAttribute("GROUP")]
+        public List<ScriptGroup> _scriptGroups { get; set; }
+    }
+
+    [Serializable]
+    [XmlRoot(ElementName ="TESTSUITE")]
+    public class ScriptSuite
+    {
+        [XmlAttribute("Name")]
+        public string _name { get; set; }
+
+        [XmlAttribute("Version")]
+        public string _version { get; set; }
+
+        [XmlAttribute("CSEdition")]
+        public string _csEdition { get; set; }
+
+        [XmlAttribute("CSMinimumVersion")]
+        public string _csMinVersion { get; set; }
+
+        [XmlElement("GROUPS")]
+        public List<ScriptGroups> _scriptGroups; 
     }
 }
