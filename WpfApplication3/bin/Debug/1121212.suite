@@ -1,0 +1,373 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TESTSUITE Name="IEC 61850 Ed.2 Conformance Test Suite" Version="1.3.t1-EA07" CSEdition="Edition2" CSMinimumVersion="1.3">
+  <SETTINGS />
+  <GROUPS>
+    <GROUP Id="2b49e9b9-e43d-41f3-bc18-a791e2ce6850" Name="15. Tracking (Conditionals)" IsActive="False" IsApplicable="False" SequenceNumber="35">
+      <SCRIPT Id="648333a3-417f-4a3b-a138-01df227a9f3d" Name="sTrk1" IsActive="False" IsApplicable="True" Type="1" SequenceNumber="1" Version="1.0.t1"><![CDATA[#######################################
+# Manual script configuration section #
+#######################################
+	FinalResult = testStatus
+
+EndTest()]]></SCRIPT>
+      <SCRIPT Id="46316ce2-fa37-48a3-8afd-5a5106155697" Name="sTrk2" IsActive="False" IsApplicable="True" Type="1" SequenceNumber="2" Version="1.0.t1"><![CDATA[#######################################
+# Manual script configuration section #
+#######################################
+
+urcbReferenceTrk        = conf['URCBReferenceTrk'].Value
+brcbReferenceTrk        = conf['BRCBReferenceTrk'].Value
+lcbReferenceTrk         = conf['LCBReferenceTrk'].Value
+dataSetTrk              = conf['DataSetTrk'].Value
+urcbReference           = conf['URCBReferenceToTrk'].Value
+predefinedDataSet       = conf['PredefinedDataSet'].Value
+configurableDatSet      = conf['ConfigurableDatSet'].Value
+configurableTrgOps      = conf['ConfigurableTrgOps'].Value
+configurableOptFields   = conf['ConfigurableOptFields'].Value
+dataUpdateSupported     = conf['data_update'].Value
+giSupported   	        = conf['general_interrogation'].Value
+clientIP1               = conf["IP1"].Value
+clientIP2               = conf["IP2"].Value
+
+#############################################
+# No manual changes needed beyond this line #
+#############################################
+
+title   = "sTrk2"
+version = "1.0.t1"
+date    = "03 Dec 2014"
+
+# Version History:
+# ----------------
+# 1.0.t1	03.12.2014	Peter		Initial version.
+
+testStatus = TestResult.RUNNING
+Client1 = 0
+Client2 = 1
+if( configurableTrgOps == "Dyn" ):
+	triggerOptions1 = "[000100]"
+	triggerOptions2 = "[000001]"
+else:
+	triggerOptions1 = None
+	triggerOptions2 = None
+
+if( configurableOptFields == "Dyn" ):
+	optFldsCombination = GetBRCBOptionalFields()
+else:
+	optFldsCombination = None
+
+# Parameter check
+Assert.Equal( dataUpdateSupported, 1, "ERROR: URCB trigger option ``data_update´´ is not configured or not supported by the DUT." )
+Assert.Equal( giSupported, 1, "ERROR: URCB trigger option ´´general_interrogatin´´ is not configured or not supported by the DUT." )
+Assert.NotEqual( urcbReference, "", "ERROR: The URCB reference is not configured (see Edit->Settings->Glbals)." )
+Assert.NotEqual( clientIP1, "", "ERROR: ClientIP1 is empty. Please configure it in the Global Settings." )
+Assert.NotEqual( clientIP2, "", "ERROR: ClientIP2 is empty. Please configure it in the Global Settings." )
+
+if( brcbReferenceTrk != "" ):
+	trackingCB = "BRCB"
+	Log( "Using Tracking BRCB: " + brcbReferenceTrk )
+elif( urcbReferenceTrk != "" ):
+	trackingCB = "URCB"
+	Log( "Using Tracking URCB: " + urcbReferenceTrk )
+#elif( lcbReferenceTrk != "" ):
+#	trackingCB = "LCB"
+#	Log( "Using Tracking LCB: " + lcbReferenceTrk )
+else:
+	Assert.Fail( "ERROR: no tracking CB were defined. Please specify one of the Global Parameters urcbReferenceTrk/brcbReferenceTrk/lcbReferenceTrk." )
+
+if( (dataSetTrk != "") and (configurableDatSet == "Dyn") ):
+	Log( "Using Tracking DataSet: " + dataSetTrk )
+else:
+	dataSetTrk = None
+	Log( "Using configured Tracking DataSet." )
+
+Log("URCBReference:        " + urcbReference)
+if( (predefinedDataSet != "") and (configurableDatSet == "Dyn") ):
+	Log( "Using BRCB DataSet:  " + predefinedDataSet )
+else:
+	predefinedDataSet = None
+	Log( "Using configured BRCB DataSet." )
+
+Log( "ClientIP1:           " + clientIP1)
+Log( "ClientIP2:           " + clientIP2)
+
+
+StartCapture()
+
+message = """
+	Start a second WireShark capture to capture clientIP2 (""" + clientIP2 + """).
+	
+	After that, press [ OK ]
+	"""
+Msgbox(message, title)
+
+connect = Associate( Client1, clientIP1 )
+Assert.Success( connect, "ERROR: Associate(ClientIP1) failed." )
+
+connect = Associate( Client2, clientIP2 )
+Assert.Success( connect, "ERROR: Associate(ClientIP2) failed." )
+
+########################
+# start of actual test #
+########################
+BeginTest(title, version, date)
+
+# A1. Client 1 configures a URCB with a data  set with a LTRK.UrcbTrk[SR] member with trigger option  ``data-update´´.
+Log( "A1. Client 1 configures a URCB with a data  set with a LTRK.UrcbTrk[SR] member with trigger option  ``data-update´´.", 1 )
+
+if( trackingCB == "BRCB" ):
+	SetXCBValuesResult = SetBRCBValues( objectReference=brcbReferenceTrk, rptEna='T', datSet=dataSetTrk, trgOps=triggerOptions1, purgeBuf='T', connectionNr=Client1 )
+	
+	# R1.  DUT sends SetBRCBValues response+ .
+	Log( "R1.  DUT sends SetBRCBValues response+ .", 1 )
+	
+	if( SetXCBValuesResult.Error != IEC61850Error.SUCCESS ):
+		Log( "ERROR: failed to configure the tracking BRCB from Client1." )
+		testStatus = TestResult.FAIL
+	
+	GetBRCBValuesResult = GetBRCBValues( brcbReferenceTrk, connectionNr=Client1 )
+	Assert.Success( GetBRCBValuesResult, "ERROR: failed to get the tracking BRCB values. Please check the Global Parameter BRCBReferenceTrk." )
+	
+	brcbValues = MMSData(ExtractValue(GetBRCBValuesResult))
+	
+	if( (dataSetTrk != "") and (configurableDatSet == "Dyn") ):
+		if( str(brcbValues[2]) != dataSetTrk ):
+			Assert.Fail( "ERROR: BRCB datSet is incorrect configured for tracking." )
+	else:
+		Log( "BRCB its datSet is of type FIX or CONF. Using pre-configured datSet = " + str(brcbValues[2]) )
+		dataSetTrk = brcbValues[2]
+	
+	trgOpsBRCB = str(brcbValues[7])
+	if( trgOpsBRCB[4] != '1' ):
+		Log( "ERROR: BRCB trgOps are incorrect configured for tracking." )
+		testStatus = TestResult.FAIL
+
+elif( trackingCB == "URCB" ):
+	SetXCBValuesResult = SetURCBValues( objectReference=urcbReferenceTrk, rptEna='T', datSet=dataSetTrk, trgOps=triggerOptions1, connectionNr=Client1 )
+	
+	# R1.  DUT sends SetBRCBValues response+ .
+	Log( "R1.  DUT sends SetBRCBValues response+ .", 1 )
+	
+	if( SetXCBValuesResult.Error != IEC61850Error.SUCCESS ):
+		Log( "ERROR: failed to configure the tracking URCB from Client1." )
+		testStatus = TestResult.FAIL
+	
+	GetURCBValuesResult = GetURCBValues( urcbReferenceTrk, connectionNr=Client1 )
+	Assert.Success( GetURCBValuesResult, "ERROR: failed to get the tracking URCB values. Please check the Global Parameter URCBReferenceTrk." )
+	
+	urcbValues = MMSData(ExtractValue(GetURCBValuesResult))
+	
+	if( (dataSetTrk != "") and (configurableDatSet == "Dyn") ):
+		if( str(urcbValues[3]) != dataSetTrk ):
+			Assert.Fail( "ERROR: URCB datSet is incorrect configured for tracking." )
+	else:
+		Log( "URCB its datSet is of type FIX or CONF. Using pre-configured datSet = " + str(urcbValues[3]) )
+		dataSetTrk = urcbValues[3]
+	
+	trgOpsURCB = urcbValues[8]
+	if( trgOpsURCB[4] != '1' ):
+		Assert.Fail( "ERROR: URCB trgOps are incorrect configured for tracking." )
+
+else:
+	Assert.Fail( "ERROR: Logging is not supported yet." )
+	
+	SetXCBValuesResult = SetLCBValues( objectReference=lcbReferenceTrk + "$datSet", datSet=dataSetTrk, connectionNr=Client1 )
+	
+	# R1.  DUT sends SetBRCBValues response+ .
+	Log( "R1.  DUT sends SetBRCBValues response+ .", 1 )
+	
+	if( SetXCBValuesResult.Error != IEC61850Error.SUCCESS ):
+		Log( "ERROR: failed to configure and enable the tracking LCB from Client1." )
+		testStatus = TestResult.FAIL
+	
+	GetLCBValuesResult = GetLCBValues( lcbReferenceTrk, connectionNr=Client1 )
+	Assert.Success( GetLCBValuesResult, "ERROR: failed to get the tracking LCB values. Please check the Global Parameter LCBReferenceTrk." )
+	
+	lcbValues = MMSData(ExtractValue(GetLCBValuesResult))
+	
+	if( (dataSetTrk != "") and (configurableDatSet == "Dyn") ):
+		if( lcbValues[2].Values != dataSetTrk ):
+			Assert.Fail( "ERROR: LCB datSet is incorrect configured for tracking." )
+	else:
+		Log( "LCB its datSet is of type FIX or CONF. Using pre-configured datSet = " + lcbValues[2].Values )
+		dataSetTrk = lcbValues[2].Values
+	
+	trgOpsLCB = lcbValues[8].Values
+	if( trgOpsLCB[4] != '1' ):
+		Assert.Fail( "ERROR: LCB trgOps are incorrect configured for tracking." )
+
+
+# A2. Client 2 configures another URCB trigger option and optional fields , enables the reporting and requests GI.
+Log( "A2. Client 2 configures another URCB trigger option and optional fields , enables the reporting and requests GI.", 1 )
+
+result = SetBRCBValues( objectReference=urcbReference, rptEna='T', datSet=predefinedDataSet, optFlds=optFldsCombination, trgOps=triggerOptions2, connectionNr=Client2 )
+if ( result.Error != IEC61850Error.SUCCESS ):
+	Log( "ERROR: Failed to reconfigure and enable the BRCB from Client2." )
+	testStatus = TestResult.FAIL
+
+result = ReportCaptureStart( 5, 10, Client1 )
+Assert.Success( result, "ERROR: Failed to start the capture of reports from Client1." )
+result = ReportCaptureStart( 2, 10, Client2 )
+Assert.Success( result, "ERROR: Failed to start the capture of reports from Client2." )
+
+result = SetBRCBValues( objectReference = urcbReference, gi = "T", connectionNr=Client2 )
+if ( result.Error != IEC61850Error.SUCCESS ):
+	Log( "ERROR: Failed to generate a GI report from Client2." )
+	testStatus = TestResult.FAIL
+
+# Wait and Fetch the report on Client1 and Client2
+ReportCaptureWait( Client1 )
+ReportResult1 = ReportCaptureFetch( Client1 )
+ReportCaptureWait( Client2 )
+ReportResult2 = ReportCaptureFetch( Client2 )
+
+# R2. DUT sends tracking reports to Client 1 with the  BrcbTrk  data value  with ServiceType = SetBRCBValues.
+Log( "R2. DUT sends tracking reports to Client 1 with the  BrcbTrk  data value  with ServiceType = SetBRCBValues.", 1 )
+
+if( (ReportResult1.ReturnValue == None) or (len(ReportResult1.ReturnValue) == 0) ):
+	Log( "ERROR: DUT has not sent a tracking report to Client1." )
+	testStatus = TestResult.FAIL
+	report = None
+else:
+	reportList = ReportResult1.ReturnValue
+
+# find out the DataSet its directory
+dataSetDirectory = None
+result = GetBRCBValues( brcbReferenceTrk + "$DatSet", connectionNr=Client1 )
+if( result.Error != IEC61850Error.SUCCESS ):
+	Log( "ERROR: failed to get the DataValues." )
+	testStatus = TestResult.FAIL
+else:
+	result = GetDataSetDirectory( MMSData(ExtractValue(result)) )
+	if( result.Error != IEC61850Error.SUCCESS ):
+		Log( "ERROR: GetDataSetDirectory failed." )
+		testStatus = TestResult.FAIL
+	else:
+		dataSetDirectory = ExtractValue(result)
+
+if( dataSetDirectory == None ):
+	Assert.Fail( "ERROR: no dataSet directory found. Stop testing." )
+
+################ DHBP TODO: find bug in CS to get the dataReference of a tracking report BUG #395
+if( False ):
+	for report in reportList:
+		Log( "DBG: dir of report = " + str(dir(report)) )
+		Log( "DBG: report.rptID  = " + report.rptID )
+		Log( "DBG: len(report.data) = " + str(len(report.dataReferences)) )
+		Log( "DBG: report.data   = " + str(report.dataReferences) )
+		for dataReference in report.dataReferences:
+			Log( "DBG: report data = " + str(dataReference) )
+		
+		if( (report.dataReferences == None) or (len(report.dataReferences) == 0) ):
+			Log( "ERROR: The report does not contain any 'data reference' field." )
+			testStatus = TestResult.FAIL
+		else:
+			datSetElementNum = 0
+			for dataReference in report.dataReferences:
+				datSetElementNum += 1
+				if dataReference in dataSetDirectory:
+					Log("Reported data element #" + str(datSetElementNum) + ": " + dataReference+". It is part of the data set that is assigned to the BRCB.")
+				else:
+					Log( "ERROR: Reported data element #" + str(datSetElementNum) + ": " + dataReference + ". It is NOT part of the data set that is assigned to the BRCB. Please check the capture file for more information." )
+					testStatus = TestResult.FAIL
+else:
+	message = """\
+		Please verify if the tracking report includes the BRCBTrk value with ServiceType = SetURCBValues (26).
+		"""
+	MsgboxOpenCapture(message, title)
+
+	message = "Did the DUT sent a correct tracking report with ServiceType = SetURCBValues (26)?"
+	ResolveYesNoCancel(message, title=title)
+
+##################### /DHBP TODO
+
+# A3. Client 2 releases the association.
+Log( "A3. Client 2 releases the association.", 1 )
+
+result = ReportCaptureStart( 3, 10, Client1 )
+Assert.Success( result, "ERROR: Failed to start the capture of reports from Client1." )
+
+result = Release( connectionNr=Client2 )
+if( result.Error != IEC61850Error.SUCCESS ):
+	Log( "ERROR: Failed to release the connection from Client2." )
+	testStatus = TestResult.FAIL
+
+ReportCaptureWait( Client1 )
+ReportResult1 = ReportCaptureFetch( Client1 )
+
+# R3. DUT sends tracking report to Client 1 with the  BrcbTrk  data value  with ServiceType = InternalChange.
+Log( "R3. DUT sends tracking report to Client 1 with the  BrcbTrk  data value  with ServiceType = InternalChange.", 1 )
+
+if( (ReportResult1.ReturnValue == None) or (len(ReportResult1.ReturnValue) == 0) ):
+	Log( "ERROR: DUT has not sent a tracking report to Client1." )
+	testStatus = TestResult.FAIL
+	report = None
+else:
+	report = ReportResult1.ReturnValue
+
+# DHBP TODO: check tracking report !!!
+################ DHBP TODO: find bug in CS to get the dataReference of a tracking report BUG #395
+if( False ):
+	for report in reportList:
+		Log( "DBG: dir of report = " + str(dir(report)) )
+		Log( "DBG: report.rptID  = " + report.rptID )
+		Log( "DBG: len(report.data) = " + str(len(report.dataReferences)) )
+		Log( "DBG: report.data   = " + str(report.dataReferences) )
+		for dataReference in report.dataReferences:
+			Log( "DBG: report data = " + str(dataReference) )
+		
+		if( (report.dataReferences == None) or (len(report.dataReferences) == 0) ):
+			Log( "ERROR: The report does not contain any 'data reference' field." )
+			testStatus = TestResult.FAIL
+		else:
+			datSetElementNum = 0
+			for dataReference in report.dataReferences:
+				datSetElementNum += 1
+				if dataReference in dataSetDirectory:
+					Log("Reported data element #" + str(datSetElementNum) + ": " + dataReference+". It is part of the data set that is assigned to the BRCB.")
+				else:
+					Log( "ERROR: Reported data element #" + str(datSetElementNum) + ": " + dataReference + ". It is NOT part of the data set that is assigned to the BRCB. Please check the capture file for more information." )
+					testStatus = TestResult.FAIL
+else:
+	message = """\
+		Please verify if the tracking report with includes the BRCBTrk value with ServiceType = InternalChange (54).
+		"""
+	MsgboxOpenCapture(message, title)
+
+	message = "Did the DUT sent a correct tracking report with ServiceType = InternalChange (54)?"
+	ResolveYesNoCancel(message, title=title)
+
+##################### /DHBP TODO
+
+# Disable the tracking CB.
+if( trackingCB == "BRCB" ):
+	SetXCBValuesResult = SetBRCBValues( objectReference=brcbReferenceTrk, rptEna='F', connectionNr=Client1 )
+	if( SetXCBValuesResult.Error != IEC61850Error.SUCCESS ):
+		Log( "ERROR: failed to disable the tracking BRCB from Client1." )
+		testStatus = TestResult.FAIL
+elif( trackingCB == "URCB" ):
+	SetXCBValuesResult = SetURCBValues( objectReference=urcbReferenceTrk, rptEna='F', connectionNr=Client1 )
+	if( SetXCBValuesResult.Error != IEC61850Error.SUCCESS ):
+		Log( "ERROR: failed to disable the tracking URCB from Client1." )
+		testStatus = TestResult.FAIL
+else:
+	Log( "ERROR: Internal error." )
+
+# Stop and save the second Wireshark capture
+message = """
+	Stop and save the second wireshark capture to capture clientIP2 (""" + clientIP2 + """).
+	
+	After that, press [ OK ]
+	"""
+Msgbox(message, title)
+
+########################
+#  end of actual test  #
+########################
+if ( testStatus == TestResult.RUNNING ):
+	FinalResult = TestResult.PASS
+else:
+	FinalResult = testStatus
+
+EndTest()]]></SCRIPT>
+    </GROUP>
+  </GROUPS>
+</TESTSUITE>

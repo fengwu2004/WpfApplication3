@@ -33,16 +33,16 @@ namespace WpfApplication3
 
             XmlSerializer xmldes = new XmlSerializer(typeof(ScriptSuite));
 
-            string path = "mydata1.xml";
+            string path = "1121212.xml";
 
             using (var stream = new FileStream(path, FileMode.Open))
             {
                 _scriptSuite = (ScriptSuite)xmldes.Deserialize(stream);
             }
 
-            TextWriter textWriter = new StreamWriter("mydata2.xml");
+            //TextWriter textWriter = new StreamWriter("mydata2.xml");
 
-            xmldes.Serialize(textWriter, _scriptSuite);
+            //xmldes.Serialize(textWriter, _scriptSuite);
 
             Console.WriteLine("OK");
         }
@@ -75,7 +75,7 @@ namespace WpfApplication3
         [XmlIgnore]
         public string _cdataContext { get; set; }
 
-        [XmlElement("Context")]
+        [XmlAttribute("Context")]
         public XmlNode Context
         {
             get
