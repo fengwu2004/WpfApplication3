@@ -40,8 +40,6 @@ namespace WpfApplication3
                 _scriptSuite = (ScriptSuite)xmldes.Deserialize(stream);
             }
 
-            _scriptSuite._scriptUnit._cdataContext = "<ABCDEFE>";
-
             TextWriter textWriter = new StreamWriter("mydata2.xml");
 
             xmldes.Serialize(textWriter, _scriptSuite);
