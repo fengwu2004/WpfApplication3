@@ -1,7 +1,73 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TESTSUITE xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Name="Yanli">
-  <SCRIPT Id="1254">
-    <Name>serialtest</Name>
-    <Context><![CDATA[<ABCDEFE>]]></Context>
-  </SCRIPT>
+<TESTSUITE xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Name="yanli">
+  <GROUPS>
+    <GROUP Id="abc" Name="eg" IsActive="true" IsApplicable="false" SequenceNumber="101">
+      <SCRIPT Id="04015" IsActive="false" IsApplicable="false" Type="0" SequenceNumber="0">
+        <Context><![CDATA[sdfhjsdlfjsdfkl<><><><>]]></Context>
+      </SCRIPT>
+      <SCRIPT Id="04015" IsActive="false" IsApplicable="false" Type="0" SequenceNumber="0">
+        <Context><![CDATA[sdfhjsdlfjsdfkl<><><><>]]></Context>
+      </SCRIPT>
+      <SCRIPT Id="04015" IsActive="false" IsApplicable="false" Type="0" SequenceNumber="0">
+        <Context><![CDATA[sdfhjsdlfjsdfkl<><><><>]]></Context>
+      </SCRIPT>
+    </GROUP>
+    <GROUP Id="abc" Name="eg" IsActive="true" IsApplicable="false" SequenceNumber="101">
+      <SCRIPT Id="04015" IsActive="false" IsApplicable="false" Type="0" SequenceNumber="0">
+        <Context><![CDATA[sdfhjsdlfjsdfkl<><><><>]]></Context>
+      </SCRIPT>
+      <SCRIPT Id="04015" IsActive="false" IsApplicable="false" Type="0" SequenceNumber="0">
+        <Context><![CDATA[sdfhjsdlfjsdfkl<><><><>]]></Context>
+      </SCRIPT>
+      <SCRIPT Id="04015" IsActive="false" IsApplicable="false" Type="0" SequenceNumber="0">
+        <Context><![CDATA[sdfhjsdlfjsdfkl<><><><>]]></Context>
+      </SCRIPT>
+    </GROUP>
+    <GROUP Id="abc" Name="eg" IsActive="true" IsApplicable="false" SequenceNumber="101">
+      <SCRIPT Id="04015" IsActive="false" IsApplicable="false" Type="0" SequenceNumber="0">
+        <Context><![CDATA[sdfhjsdlfjsdfkl<><><><>]]></Context>
+      </SCRIPT>
+      <SCRIPT Id="04015" IsActive="false" IsApplicable="false" Type="0" SequenceNumber="0">
+        <Context><![CDATA[sdfhjsdlfjsdfkl<><><><>]]></Context>
+      </SCRIPT>
+      <SCRIPT Id="04015" IsActive="false" IsApplicable="false" Type="0" SequenceNumber="0">
+        <Context><![CDATA[sdfhjsdlfjsdfkl<><><><>]]></Context>
+      </SCRIPT>
+    </GROUP>
+  </GROUPS>
+  <GROUPS>
+    <GROUP Id="abc" Name="eg" IsActive="true" IsApplicable="false" SequenceNumber="101">
+      <SCRIPT Id="04015" IsActive="false" IsApplicable="false" Type="0" SequenceNumber="0">
+        <Context><![CDATA[sdfhjsdlfjsdfkl<><><><>]]></Context>
+      </SCRIPT>
+      <SCRIPT Id="04015" IsActive="false" IsApplicable="false" Type="0" SequenceNumber="0">
+        <Context><![CDATA[sdfhjsdlfjsdfkl<><><><>]]></Context>
+      </SCRIPT>
+      <SCRIPT Id="04015" IsActive="false" IsApplicable="false" Type="0" SequenceNumber="0">
+        <Context><![CDATA[sdfhjsdlfjsdfkl<><><><>]]></Context>
+      </SCRIPT>
+    </GROUP>
+    <GROUP Id="abc" Name="eg" IsActive="true" IsApplicable="false" SequenceNumber="101">
+      <SCRIPT Id="04015" IsActive="false" IsApplicable="false" Type="0" SequenceNumber="0">
+        <Context><![CDATA[sdfhjsdlfjsdfkl<><><><>]]></Context>
+      </SCRIPT>
+      <SCRIPT Id="04015" IsActive="false" IsApplicable="false" Type="0" SequenceNumber="0">
+        <Context><![CDATA[sdfhjsdlfjsdfkl<><><><>]]></Context>
+      </SCRIPT>
+      <SCRIPT Id="04015" IsActive="false" IsApplicable="false" Type="0" SequenceNumber="0">
+        <Context><![CDATA[sdfhjsdlfjsdfkl<><><><>]]></Context>
+      </SCRIPT>
+    </GROUP>
+    <GROUP Id="abc" Name="eg" IsActive="true" IsApplicable="false" SequenceNumber="101">
+      <SCRIPT Id="04015" IsActive="false" IsApplicable="false" Type="0" SequenceNumber="0">
+        <Context><![CDATA[sdfhjsdlfjsdfkl<><><><>]]></Context>
+      </SCRIPT>
+      <SCRIPT Id="04015" IsActive="false" IsApplicable="false" Type="0" SequenceNumber="0">
+        <Context><![CDATA[sdfhjsdlfjsdfkl<><><><>]]></Context>
+      </SCRIPT>
+      <SCRIPT Id="04015" IsActive="false" IsApplicable="false" Type="0" SequenceNumber="0">
+        <Context><![CDATA[sdfhjsdlfjsdfkl<><><><>]]></Context>
+      </SCRIPT>
+    </GROUP>
+  </GROUPS>
 </TESTSUITE>

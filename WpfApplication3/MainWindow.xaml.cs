@@ -29,20 +29,20 @@ namespace WpfApplication3
         {
             InitializeComponent();
 
-            //_scriptSuite = new ScriptSuite(){ };
+            _scriptSuite = new ScriptSuite() { };
 
             XmlSerializer xmldes = new XmlSerializer(typeof(ScriptSuite));
 
-            string path = "1121212.xml";
+            //string path = "1121212.xml";
 
-            using (var stream = new FileStream(path, FileMode.Open))
-            {
-                _scriptSuite = (ScriptSuite)xmldes.Deserialize(stream);
-            }
+            //using (var stream = new FileStream(path, FileMode.Open))
+            //{
+            //    _scriptSuite = (ScriptSuite)xmldes.Deserialize(stream);
+            //}
 
-            //TextWriter textWriter = new StreamWriter("mydata2.xml");
+            TextWriter textWriter = new StreamWriter("mydata2.xml");
 
-            //xmldes.Serialize(textWriter, _scriptSuite);
+            xmldes.Serialize(textWriter, _scriptSuite);
 
             Console.WriteLine("OK");
         }
@@ -51,10 +51,17 @@ namespace WpfApplication3
     [Serializable]
     public class ScriptUnit
     {
+        public ScriptUnit()
+        {
+            _scriptId = "04015";
+
+            _cdataContext = "sdfhjsdlfjsdfkl<><><><>";
+        }
+
         [XmlAttribute("Id")]
         public string _scriptId { get; set; }
 
-        [XmlElement("Name")]
+        [XmlAttribute("Name")]
         public string _Name { get; set; }
 
         [XmlAttribute("IsActive")]
@@ -75,12 +82,11 @@ namespace WpfApplication3
         [XmlIgnore]
         public string _cdataContext { get; set; }
 
-        [XmlAttribute("Context")]
         public XmlNode Context
         {
             get
             {
-                XmlNode node = new XmlDocument().CreateNode(XmlNodeType.CDATA, "","");
+                XmlNode node = new XmlDocument().CreateNode(XmlNodeType.CDATA, "", "");
 
                 node.InnerText = _cdataContext;
 
@@ -102,6 +108,27 @@ namespace WpfApplication3
     [Serializable]
     public class ScriptGroup
     {
+        public ScriptGroup()
+        {
+            _id = "abc";
+
+            _name = "eg";
+
+            _isActive = true;
+
+            _isApplicable = false;
+
+            _sequenceNumber = 101;
+
+            _scrpits = new List<ScriptUnit>() { };
+
+            _scrpits.Add(new ScriptUnit() { });
+
+            _scrpits.Add(new ScriptUnit() { });
+
+            _scrpits.Add(new ScriptUnit() { });
+        }
+
         [XmlAttribute("Id")]
         public string _id { get; set; }
 
@@ -124,7 +151,18 @@ namespace WpfApplication3
     [Serializable]
     public class ScriptGroups
     {
-        [XmlAttribute("GROUP")]
+        public ScriptGroups()
+        {
+            _scriptGroups = new List<ScriptGroup>();
+
+            _scriptGroups.Add(new ScriptGroup() { });
+
+            _scriptGroups.Add(new ScriptGroup() { });
+
+            _scriptGroups.Add(new ScriptGroup() { });
+        }
+
+        [XmlElement("GROUP")]
         public List<ScriptGroup> _scriptGroups { get; set; }
     }
 
@@ -132,6 +170,17 @@ namespace WpfApplication3
     [XmlRoot(ElementName ="TESTSUITE")]
     public class ScriptSuite
     {
+        public ScriptSuite()
+        {
+            _name = "yanli";
+
+            _scriptGroups = new List<ScriptGroups>();
+
+            _scriptGroups.Add(new ScriptGroups());
+
+            _scriptGroups.Add(new ScriptGroups());
+        }
+
         [XmlAttribute("Name")]
         public string _name { get; set; }
 
